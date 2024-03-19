@@ -202,6 +202,9 @@ func (p *PbftConsensusNode) handleCommit(content []byte) {
 		}
 	}
 }
+func (p *PbftConsensusNode) handleOtherShardBlock(content []byte) {
+	p.pl.Plog.Printf("handleOtherShardBlock\n")
+}
 
 // this func is only invoked by the main node,
 // if the request is correct, the main node will send

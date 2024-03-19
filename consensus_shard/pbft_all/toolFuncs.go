@@ -36,7 +36,13 @@ func (p *PbftConsensusNode) getNeighborNodes() []string {
 	}
 	return receiverNodes
 }
-
+func (p *PbftConsensusNode) getothershardNodes(id uint64) []string {
+	receiverNodes := make([]string, 0)
+	for _, ip := range p.ip_nodeTable[id] {
+		receiverNodes = append(receiverNodes, ip)
+	}
+	return receiverNodes
+}
 func (p *PbftConsensusNode) writeCSVline(str []string) {
 	dirpath := params.DataWrite_path + "pbft_" + strconv.Itoa(int(p.pbftChainConfig.ShardNums))
 	err := os.MkdirAll(dirpath, os.ModePerm)

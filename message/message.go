@@ -19,12 +19,12 @@ const (
 	CSendOldrequest    MessageType = "sendOldrequest"
 	CStop              MessageType = "stop"
 
-	CRelay  MessageType = "relay"
-	CInject MessageType = "inject"
-
-	CBlockSingle MessageType = "BlockSingle"
-	CBlockInfo   MessageType = "BlockInfo"
-	CSeqIDinfo   MessageType = "SequenceID"
+	CRelay           MessageType = "relay"
+	CInject          MessageType = "inject"
+	COtherShardBlock MessageType = "COtherShardBlock"
+	CBlockSingle     MessageType = "BlockSingle"
+	CBlockInfo       MessageType = "BlockInfo"
+	CSeqIDinfo       MessageType = "SequenceID"
 )
 
 var (
@@ -42,7 +42,9 @@ type Request struct {
 	Msg         RawMessage // request message
 	ReqTime     time.Time  // request time
 }
-
+type OtherShardBlock struct {
+	Msg RawMessage // request message
+}
 type PrePrepare struct {
 	RequestMsg *Request // the request message should be pre-prepared
 	Digest     []byte   // the digest of this request, which is the only identifier

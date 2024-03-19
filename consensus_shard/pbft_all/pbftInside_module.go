@@ -98,6 +98,20 @@ func (rphm *RawRelayPbftExtraHandleMod) HandleinCommit(cmsg *message.Commit) boo
 		//	go networks.TcpDial(msg_send, rphm.pbftNode.ip_nodeTable[sid][0])
 		//	rphm.pbftNode.pl.Plog.Printf("S%dN%d : sended relay txs to %d\n", rphm.pbftNode.ShardID, rphm.pbftNode.NodeID, sid)
 		//}
+		othershardblock := message.OtherShardBlock{
+			Msg: r.Msg,
+		}
+		oByte, err := json.Marshal(othershardblock)
+		if err != nil {
+			log.Panic()
+		}
+		msg_send_othershard := message.MergeMessage(message.COtherShardBlock, oByte)
+		for i := uint64(0); i < rphm.pbftNode.Shardnums; i++ {
+			if i != rphm.pbftNode.ShardID {
+				go networks.TcpDial(msg_send_othershard, rphm.pbftNode.ip_nodeTable[i][0])
+				//networks.Broadcast(p.RunningNode.IPaddr, p.getNeighborNodes(), msg_send)
+			}
+		}
 		rphm.pbftNode.CurChain.Txpool.ClearRelayPool()
 		// send txs excuted in this block to the listener
 		// add more message to measure more metrics

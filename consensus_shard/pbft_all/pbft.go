@@ -33,6 +33,7 @@ type PbftConsensusNode struct {
 	RunningNode *shard.Node // the node information
 	ShardID     uint64      // denote the ID of the shard (or pbft), only one pbft consensus in a shard
 	NodeID      uint64      // denote the ID of the node in the pbft (shard)
+	Shardnums   uint64
 
 	// the data structure for blockchain
 	CurChain  *chain.BlockChain // all node in the shard maintain the same blockchain ##分片中的所有节点都维护相同的区块链
@@ -103,6 +104,7 @@ func NewPbftNode(shardID, nodeID uint64, pcc *params.ChainConfig, messageHandleT
 	p.ShardID = shardID
 	p.NodeID = nodeID
 	p.pbftChainConfig = pcc
+	p.Shardnums = pcc.ShardNums
 	fp := "./record/ldb/s" + strconv.FormatUint(shardID, 10) + "/n" + strconv.FormatUint(nodeID, 10)
 	var err error
 	p.db, err = rawdb.NewLevelDBDatabase(fp, 0, 1, "accountState", false)
@@ -319,6 +321,8 @@ func (p *PbftConsensusNode) handleMessage(msg []byte) {
 		p.handleSendOldSeq(content)
 	case message.CStop:
 		p.WaitToStop()
+	case message.COtherShardBlock:
+		p.handleOtherShardBlock(content)
 
 	// handle the message from outside
 	default:
